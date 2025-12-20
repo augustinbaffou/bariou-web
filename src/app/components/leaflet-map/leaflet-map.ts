@@ -1,14 +1,7 @@
 
 import { AfterViewInit, Component, Input, OnChanges } from '@angular/core';
 import * as Leaflet from 'leaflet';
-
-export interface BarMarker {
-  lat: number;
-  lng: number;
-  name: string;
-  rank: string;
-  description?: string;
-}
+import {BarMarker} from '../../commun/bar.model';
 
 @Component({
   selector: 'app-leaflet-map',
@@ -23,14 +16,21 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   private map!: Leaflet.Map;
   private markersLayer = new Leaflet.LayerGroup();
 
+  private iconCache = new Map<string, Leaflet.Icon>();
+
   ngAfterViewInit(): void {
     this.initializeMap();
-    this.addMarkersToMap();
+    this.refreshMarkers();
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: import('@angular/core').SimpleChanges): void {
+    console.log('LeafletMap ngOnChanges', changes, 'map defined ?', !!this.map);
+
     if (this.map) {
-      this.toggleMarkersVisibility();
+      if (changes['showMarkers']) {
+        console.log('showMarkers changed to', this.showMarkers);
+        this.toggleMarkersVisibility();
+      }
     }
   }
 
@@ -39,6 +39,16 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap'
+    }).addTo(this.map);
+
+    const center: [number, number] = [47.218371, -1.553621];
+    const radius = 7500;
+
+    Leaflet.circle(center, {
+      radius,
+      color: 'oklch(27.4% 0.072 132.109)',
+      weight: 1,
+      fillOpacity: 0
     }).addTo(this.map);
 
     this.markersLayer.addTo(this.map);
@@ -53,9 +63,16 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
   private toggleMarkersVisibility(): void {
     if (this.showMarkers) {
       this.markersLayer.addTo(this.map);
+      this.refreshMarkers();
     } else {
       this.markersLayer.remove();
     }
+  }
+
+  private refreshMarkers(): void {
+    if (!this.map) return;
+    this.markersLayer.clearLayers();
+    this.addMarkersToMap();
   }
 
   private addBarMarker(marker: BarMarker): void {
@@ -76,11 +93,18 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
 
     Leaflet.marker([marker.lat, marker.lng])
       .addTo(this.markersLayer)
-      .setIcon(Leaflet.icon({
-        iconUrl: 'markers/custom/' + marker.rank + '.png',
-        iconSize: [64, 64],
-        iconAnchor: [32, 64]
-      }))
+      .setIcon(this.getIconForRank(marker.rank))
       .bindPopup(popupContent, customOptions);
   }
+
+  private getIconForRank(rank: string): Leaflet.Icon {
+    if (!this.iconCache.has(rank)) {
+      this.iconCache.set(rank, Leaflet.icon({
+        iconUrl: 'markers/custom/' + rank + '.png',
+        iconSize: [64, 64],
+        iconAnchor: [32, 64]
+      }));
+    }
+    return this.iconCache.get(rank)!;
+    }
 }
