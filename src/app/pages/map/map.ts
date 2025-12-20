@@ -8,6 +8,8 @@ import * as Leaflet from 'leaflet';
 export class MapComponent implements AfterViewInit {
 
   private map!: Leaflet.Map;
+  private markersLayer = new Leaflet.LayerGroup();
+  showMarkers = true;
 
   ngAfterViewInit(): void {
     this.map = Leaflet.map('map').setView([47.218371, -1.553621], 14); // Paris
@@ -16,28 +18,24 @@ export class MapComponent implements AfterViewInit {
       attribution: '© OpenStreetMap'
     }).addTo(this.map);
 
-    this.addBarMarker(47.21586701600259, -1.552332505406107,
-      'Le Pti Zinc', 'A'
-    );
+    this.markersLayer.addTo(this.map);
 
-    this.addBarMarker(47.21372544912577, -1.5537666949395479,
-      'Le Chemin de Traverse', 'S'
-    );
-
-    this.addBarMarker(47.21505311084935, -1.556742516429673,
-      'Le Tabarnak', 'B'
-    );
-
-    this.addBarMarker(47.21570471600971, -1.5525603107226769,
-      'John McByrne', 'C'
-    );
-
-    this.addBarMarker(47.21122766115359, -1.5567164804819056,
-      'La Scierie', 'D'
-    );
+    this.addBarMarker(47.21586701600259, -1.552332505406107, 'Le Pti Zinc', 'A');
+    this.addBarMarker(47.21372544912577, -1.5537666949395479, 'Le Chemin de Traverse', 'S');
+    this.addBarMarker(47.21505311084935, -1.556742516429673, 'Le Tabarnak', 'B');
+    this.addBarMarker(47.21570471600971, -1.5525603107226769, 'John McByrne', 'C');
+    this.addBarMarker(47.21122766115359, -1.5567164804819056, 'La Scierie', 'D');
   }
 
-  // ... existing code ...
+  toggleMarkers() {
+    this.showMarkers = !this.showMarkers;
+    if (this.showMarkers) {
+      this.markersLayer.addTo(this.map);
+    } else {
+      this.markersLayer.remove();
+    }
+  }
+
   addBarMarker(lat: number, lng: number, name: string, rank: string) {
     const popupContent = `
       <div class="p-1">
@@ -55,7 +53,7 @@ export class MapComponent implements AfterViewInit {
     };
 
     Leaflet.marker([lat, lng])
-      .addTo(this.map)
+      .addTo(this.markersLayer)
       .setIcon(Leaflet.icon({
         iconUrl: 'markers/custom/' + rank + '.png',
         iconSize: [64, 64],
