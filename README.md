@@ -1,59 +1,46 @@
-# Bariou
+# 🍻 Bariou - Client Web
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+Bariou est une application interactive permettant de découvrir et de localiser les meilleurs bars. Ce projet se concentre sur une expérience utilisateur fluide grâce à une carte interactive et un design moderne.
 
-## Development server
+> **Note :** Ce dépôt contient uniquement la partie **Frontend** de l'application.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 🚀 Technologies utilisées
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+L'application est bâtie sur une stack moderne :
+*   **Framework :** [Angular 21](https://angular.dev/)
+*   **Cartographie :** [Leaflet](https://leafletjs.com/)
+*   **Styling :** [Tailwind CSS 4](https://tailwindcss.com/)
 
-## Code scaffolding
+## ✨ Fonctionnalités (Actuelles & À venir)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- [x] Carte interactive avec marqueurs personnalisés.
+- [x] Affichage des détails des établissements (Popups).
+- [ ] Système de recherche par ville (Évolutivité prévue).
+- [ ] Filtres par type d'ambiance ou notation.
+- [ ] Connexion à une API dédiée (Backend en cours de réflexion).
 
-```bash
-ng generate component component-name
-```
+## 🛠️ Installation et Démarrage
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Prérequis
+- [Node.js](https://nodejs.org/) (version 20 ou supérieure recommandée)
+- [Angular CLI](https://angular.dev/tools/cli) installed (`npm install -g @angular/cli`)
 
-```bash
-ng generate --help
-```
+### Étapes
+1. **Cloner le dépôt :**
+   ```bash
+   git clone https://github.com/augustinbaffou/bariou-web.git
+   cd bariou-web
+   ```
 
-## Building
+2. **Installer les dépendances :**
+   ```bash
+   npm install
+   ```
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+3. **Lancer le serveur de développement :**
+   ```bash
+   npm start
+   ```
+   L'application sera disponible sur `http://localhost:4200/`.
