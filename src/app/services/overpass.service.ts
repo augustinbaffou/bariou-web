@@ -40,16 +40,18 @@ export class OverpassService {
   constructor(private http: HttpClient) {}
 
   getBarsInNantes(): Observable<OverpassElement[]> {
+    const area = `(around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng})`;
+
     const query = `
       [out:json][timeout:25];
       (
-        node["amenity"=${this.AMENITY_BAR_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
-        node["amenity"=${this.AMENITY_CAFE_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
-        node["amenity"=${this.AMENITY_PUB_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
+        node["amenity"=${this.AMENITY_BAR_KEY}]${area};
+        node["amenity"=${this.AMENITY_CAFE_KEY}]${area};
+        node["amenity"=${this.AMENITY_PUB_KEY}]${area};
 
-        way["amenity"=${this.AMENITY_BAR_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
-        way["amenity"=${this.AMENITY_CAFE_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
-        way["amenity"=${this.AMENITY_PUB_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
+        way["amenity"=${this.AMENITY_BAR_KEY}]${area};
+        way["amenity"=${this.AMENITY_CAFE_KEY}]${area};
+        way["amenity"=${this.AMENITY_PUB_KEY}]${area};
       );
       out center;
     `;

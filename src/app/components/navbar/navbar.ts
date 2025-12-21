@@ -1,5 +1,4 @@
-
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {Component, input, output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 @Component({
@@ -10,10 +9,10 @@ import {CommonModule} from '@angular/common';
   imports: [CommonModule]
 })
 export class NavbarComponent {
-  @Input() showMarkers = true;
-  @Output() toggleMarkersEvent = new EventEmitter<void>();
+  showMarkers = input(true);
+  toggleMarkers = output<void>();
 
   onToggleMarkers() {
-    this.toggleMarkersEvent.emit();
+    this.toggleMarkers.emit();
   }
 }

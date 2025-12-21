@@ -1,31 +1,10 @@
 <div class="h-screen w-full grid grid-rows-[auto_1fr]">
-  <app-navbar
-    [showMarkers]="showMarkers"
-    (toggleMarkersEvent)="toggleMarkers()">
-  </app-navbar>
+  <app-navbar (toggleMarkers)="toggleMarkers()"></app-navbar>
 
-  <!-- Bloc de contenu principal -->
   <div class="relative">
-    <!-- Loader pendant le chargement -->
-    @if (isLoading) {
-      <div class="flex items-center justify-center h-full">
-        <div class="text-gray-600 text-sm">
-          Chargement des bars...
-        </div>
-      </div>
-    }
-
-    @if (bars$ | async; as bars) {
-      <app-leaflet-map
-        [markers]="bars"
-        [showMarkers]="showMarkers">
-      </app-leaflet-map>
-    } @else {
-      <div class="flex items-center justify-center h-full">
-        <div class="text-gray-600 text-sm">
-          Chargement des bars...
-        </div>
-      </div>
-    }
+    <app-leaflet-map
+      [markers]="bars()"
+      [showMarkers]="showMarkers()">
+    </app-leaflet-map>
   </div>
 </div>

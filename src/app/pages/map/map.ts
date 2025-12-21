@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {LeafletMapComponent} from '../../components/leaflet-map/leaflet-map';
 import {NavbarComponent} from '../../components/navbar/navbar';
-import {OverpassElement, OverpassService} from '../../services/overpass.service';
+import {OverpassService} from '../../services/overpass.service';
 import {catchError, Observable, of, shareReplay, tap} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {AsyncPipe} from '@angular/common';
 import {BarMarker} from '../../commun/bar.model';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {BarMarkerConverterService} from '../../services/bar-converter.service';
 
 @Component({
   selector: 'app-map',
@@ -13,79 +14,30 @@ import {BarMarker} from '../../commun/bar.model';
   standalone: true,
   imports: [
     LeafletMapComponent,
-    NavbarComponent,
-    AsyncPipe
+    NavbarComponent
   ]
 })
-export class MapComponent implements OnInit {
-  showMarkers = true;
 
-  bars$!: Observable<BarMarker[]>;
-  isLoading = true;
+export class MapComponent {
+  showMarkers = signal(true);
 
-  constructor(private overpassService: OverpassService) {
-  }
+  private readonly overpassService = inject(OverpassService);
+  private readonly barConverterService = inject(BarMarkerConverterService);
 
-  ngOnInit(): void {
-    this.loadBarsFromOverpass();
-  }
+  private handleError = (error: any): Observable<BarMarker[]> => {
+    console.error('Erreur lors du chargement des bars:', error);
+    return of([]);
+  };
 
-  private loadBarsFromOverpass(): void {
-    console.log('Chargement des bars depuis Overpass...');
-    this.bars$ = this.overpassService.getBarsInNantes().pipe(
-      map((elements: OverpassElement[]) => this.convertToBarMarkers(elements)),
-      tap(bars => {
-        console.log('Bars chargés depuis Overpass, count =', bars.length);
-        this.isLoading = false;
-      }),
-      catchError(error => {
-        console.error('Erreur lors du chargement des bars:', error);
-        this.isLoading = false;
-        return of([]);
-      }),
-      shareReplay(1)
-    );
-  }
-
-  private convertToBarMarkers(elements: OverpassElement[]): BarMarker[] {
-    const possibleRanks = ['S', 'A', 'B', 'C', 'D'];
-    return elements.map(element => {
-      const randomValue = Math.random();
-      let rank: string;
-      if (randomValue < 0.75) {
-        rank = 'NA';
-      } else {
-        rank = possibleRanks[Math.floor(Math.random() * possibleRanks.length)];
-      }
-      return {
-        lat: element.lat,
-        lng: element.lon,
-        name: element.tags.name || 'Bar sans nom',
-        rank: rank,
-        description: this.buildDescription(element.tags)
-      };
-    });
-  }
-
-  private buildDescription(tags: any): string {
-    const parts: string[] = [];
-
-    if (tags['contact:street'] && tags['contact:housenumber']) {
-      parts.push(`${tags['contact:housenumber']} ${tags['contact:street']}`);
-    }
-
-    if (tags['opening_hours']) {
-      parts.push(`Horaires: ${tags['opening_hours']}`);
-    }
-
-    if (tags['contact:phone']) {
-      parts.push(`Tél: ${tags['contact:phone']}`);
-    }
-
-    return parts.length > 0 ? parts.join(' • ') : 'Un super endroit pour se détendre entre amis.';
-  }
+  bars = toSignal(
+    this.overpassService.getBarsInNantes().pipe(
+      map(elements => this.barConverterService.convertToBarMarkers(elements)),
+      catchError(this.handleError)
+    ),
+    { initialValue: [] as BarMarker[] }
+  );
 
   toggleMarkers(): void {
-    this.showMarkers = !this.showMarkers;
+    this.showMarkers.update(value => !value);
   }
 }
