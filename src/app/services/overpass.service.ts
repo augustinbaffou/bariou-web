@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {NANTES_CENTER_COORDS, NANTES_SEARCH_RADIUS} from '../commun/config';
 
 export interface OverpassElement {
   type: string;
@@ -32,10 +33,6 @@ export interface OverpassResponse {
 export class OverpassService {
   private readonly API_URL = 'https://overpass-api.de/api/interpreter';
 
-  private readonly SEARCH_RADIUS = 7500;
-  private readonly NANTES_CENTER_LAT = 47.218371;
-  private readonly NANTES_CENTER_LNG = -1.553621;
-
   private readonly AMENITY_BAR_KEY = 'bar';
   private readonly AMENITY_CAFE_KEY = 'cafe';
   private readonly AMENITY_PUB_KEY = 'pub';
@@ -46,13 +43,13 @@ export class OverpassService {
     const query = `
       [out:json][timeout:25];
       (
-        node["amenity"=${this.AMENITY_BAR_KEY}](around:${this.SEARCH_RADIUS},${this.NANTES_CENTER_LAT},${this.NANTES_CENTER_LNG});
-        node["amenity"=${this.AMENITY_CAFE_KEY}](around:${this.SEARCH_RADIUS},${this.NANTES_CENTER_LAT},${this.NANTES_CENTER_LNG});
-        node["amenity"=${this.AMENITY_PUB_KEY}](around:${this.SEARCH_RADIUS},${this.NANTES_CENTER_LAT},${this.NANTES_CENTER_LNG});
+        node["amenity"=${this.AMENITY_BAR_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
+        node["amenity"=${this.AMENITY_CAFE_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
+        node["amenity"=${this.AMENITY_PUB_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
 
-        way["amenity"=${this.AMENITY_BAR_KEY}](around:${this.SEARCH_RADIUS},${this.NANTES_CENTER_LAT},${this.NANTES_CENTER_LNG});
-        way["amenity"=${this.AMENITY_CAFE_KEY}](around:${this.SEARCH_RADIUS},${this.NANTES_CENTER_LAT},${this.NANTES_CENTER_LNG});
-        way["amenity"=${this.AMENITY_PUB_KEY}](around:${this.SEARCH_RADIUS},${this.NANTES_CENTER_LAT},${this.NANTES_CENTER_LNG});
+        way["amenity"=${this.AMENITY_BAR_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
+        way["amenity"=${this.AMENITY_CAFE_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
+        way["amenity"=${this.AMENITY_PUB_KEY}](around:${NANTES_SEARCH_RADIUS},${NANTES_CENTER_COORDS.lat},${NANTES_CENTER_COORDS.lng});
       );
       out center;
     `;

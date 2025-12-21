@@ -2,6 +2,7 @@
 import { AfterViewInit, Component, Input, OnChanges } from '@angular/core';
 import * as Leaflet from 'leaflet';
 import {BarMarker} from '../../commun/bar.model';
+import {NANTES_SEARCH_RADIUS, NANTES_CENTER_COORDS} from '../../commun/config';
 
 @Component({
   selector: 'app-leaflet-map',
@@ -41,8 +42,8 @@ export class LeafletMapComponent implements AfterViewInit, OnChanges {
       attribution: '© OpenStreetMap'
     }).addTo(this.map);
 
-    const center: [number, number] = [47.218371, -1.553621];
-    const radius = 7500;
+    const center: [number, number] = [NANTES_CENTER_COORDS.lat, NANTES_CENTER_COORDS.lng];
+    const radius = NANTES_SEARCH_RADIUS;
 
     Leaflet.circle(center, {
       radius,
